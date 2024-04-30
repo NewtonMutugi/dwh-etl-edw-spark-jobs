@@ -1,8 +1,18 @@
-SELECT
+select
     patient.PatientPKHash,
     patient.SiteCode,
-    ScreenedDiabetes,
-    ScreenedBPLastVisit
-FROM Patient patient
-left join latest_diabetes_test on latest_diabetes_test.PatientPKHash = patient.PatientPKHash and latest_diabetes_test.SiteCode = patient.SiteCode
-left join visit on visit.PatientPK = patient.PatientPK and visit.SiteCode = patient.SiteCode
+    case
+        when latest_diabetes.Controlled in ('Yes', 'No') then  1
+        else 0
+        end as ScreenedDiabetes,
+    case
+        when latest_hypertension.Controlled in ('Yes', 'No') then  1
+        else 0
+        end as ScreenedBPLastVisit
+from Patient
+         left join ODS.dbo.Intermediate_NCDControlledStatusLastVisit as latest_diabetes on latest_diabetes.PatientPKHash = Patient.PatientPKHash
+    and latest_diabetes.SiteCode = Patient.SiteCode
+    and latest_diabetes.Disease = 'Diabetes'
+         left join ODS.dbo.Intermediate_NCDControlledStatusLastVisit as latest_hypertension on latest_hypertension.PatientPKHash = Patient.PatientPKHash
+    and latest_hypertension.SiteCode = Patient.SiteCode
+    and latest_hypertension.Disease = 'Hypertension'

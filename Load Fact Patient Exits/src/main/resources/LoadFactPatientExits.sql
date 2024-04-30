@@ -14,6 +14,10 @@ from Exits
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code=Exits.SiteCode
     Left join partner on partner.PartnerName=MFL_partner_agency_combination.SDP
     Left join agency on agency.AgencyName=MFL_partner_agency_combination.agency
+    left join Died on Died.PatientPKHash=Exits.PatientPKHash and Died.SiteCode=Exits.SiteCode
+    left join [Stopped] on [Stopped].PatientPKHash=Exits.PatientPKHash and [Stopped].SiteCode=Exits.SiteCode
+    left join TransferOut on TransferOut.PatientPK=Exits.PatientPKHash and TransferOut.SiteCode=Exits.SiteCode
+    left join LTFU on LTFU.PatientPKHash=Exits.PatientPKHash and LTFU.SiteCode=Exits.SiteCode
     left join DimDate as dtARTStop on dtARTStop.Date= dtARTStop
     left join DimDate as dtLTFU on dtLTFU.Date= dtLTFU
     left join DimDate as dtTO on dtTO.Date= dtTO

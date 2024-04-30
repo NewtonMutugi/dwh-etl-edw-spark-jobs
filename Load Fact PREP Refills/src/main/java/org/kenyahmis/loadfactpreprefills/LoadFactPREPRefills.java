@@ -80,7 +80,7 @@ public class LoadFactPREPRefills {
                         "    left join PrepPatients Patients on Refil.PrepNumber=Patients.PrepNumber and Refil.PatientPk=Patients.PatientPk \n" +
                         "        and Refil.SiteCode=Patients.SiteCode\n" +
                         "    where Refil.PrepNumber is not null \n" +
-                        "        and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 30 and 37\n" +
+                        "        and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 23 and 37\n" +
                         "        and Refil.RowNumber = 1")
                 .createOrReplaceTempView("PrepRefil1stMonth");
 
@@ -98,7 +98,7 @@ public class LoadFactPREPRefills {
                         "    left join PrepPatients Patients on Refil.PrepNumber=Patients.PrepNumber and Refil.PatientPk=Patients.PatientPk \n" +
                         "        and Refil.SiteCode=Patients.SiteCode\n" +
                         "    where Refil.PrepNumber is not null \n" +
-                        "        and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 90 and 97")
+                        "        and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 83 and 97")
                 .createOrReplaceTempView("PrepRefil3rdMonth");
 
 

@@ -1,11 +1,11 @@
 Select
-    Coalesce (DHIS2_HTSPos.SiteCode, NDW_HTSPos.sitecode,LatestEMR.facilityCode ) As MFLCode,
+    coalesce (DHIS2_HTSPos.SiteCode, NDW_HTSPos.sitecode,LatestEMR.facilityCode ) As MFLCode,
     Coalesce (NDW_HTSPos.Facility_Name, DHIS2_HTSPos.FacilityName) As FacilityName,
     fac.SDP As SDP,
     fac.emr as EMR,
     Coalesce (NDW_HTSPos.County, DHIS2_HTSPos.County) As County,
     DHIS2_HTSPos.Positive_Total As KHIS_HTSPos,
-    Coalesce (NDW_HTSPos.HTSPos_total, 0 )AS DWH_HTSPos,
+    coalesce (NDW_HTSPos.HTSPos_total, 0 )AS DWH_HTSPos,
     LatestEMR.EMRValue As EMR_HTSPos,
     LatestEMR.EMRValue-HTSPos_total As Diff_EMR_DWH,
     DHIS2_HTSPos.Positive_Total-HTSPos_total As DiffKHISDWH,
@@ -19,9 +19,9 @@ Select
     cast (Upload.DateUploaded as date) As DateUploaded,
     DWAPI.DwapiVersion
 from DHIS2_HTSPos
-left join LatestEMR on DHIS2_HTSPos.sitecode=LatestEMR.facilityCode
-LEFT JOIN DWAPI ON DWAPI.SiteCode= LatestEMR.facilityCode
-left join NDW_HTSPos on NDW_HTSPos.sitecode=DHIS2_HTSPos.SiteCode
-left join Upload on NDW_HTSPos.SiteCode=Upload.SiteCode
-left join Facilityinfo fac on DHIS2_HTSPos.SiteCode=fac.MFL_Code
+         left join LatestEMR on DHIS2_HTSPos.sitecode=LatestEMR.facilityCode
+         LEFT JOIN DWAPI ON DWAPI.SiteCode= LatestEMR.facilityCode
+         left join NDW_HTSPos on NDW_HTSPos.sitecode=DHIS2_HTSPos.SiteCode
+         left join Upload on NDW_HTSPos.SiteCode=Upload.SiteCode
+         left join Facilityinfo fac on DHIS2_HTSPos.SiteCode=fac.MFL_Code
 where DHIS2_HTSPos.Positive_Total is not null

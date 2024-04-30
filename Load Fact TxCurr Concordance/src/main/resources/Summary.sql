@@ -20,9 +20,9 @@ Select
     case when CompletenessStatus is null then 'Complete' else 'Incomplete' End As Completeness,
     DWAPI.DwapiVersion
 from NDW_CurTx
-left join LatestEMR on NDW_CurTx.SiteCode=LatestEMR.facilityCode
-LEFT JOIN DWAPI ON DWAPI.SiteCode= LatestEMR.facilityCode
-left join DHIS2_CurTx on NDW_CurTx.SiteCode=DHIS2_CurTx.SiteCode
-left join Upload on NDW_CurTx.SiteCode=Upload.SiteCode
-left join Uploaddata on NDW_CurTx.SiteCode=Uploaddata.MFL_Code
-left join Facilityinfo fac on NDW_CurTx.SiteCode=fac.MFL_Code
+         left join LatestEMR on NDW_CurTx.SiteCode=LatestEMR.facilityCode
+         LEFT JOIN DWAPI ON DWAPI.SiteCode= LatestEMR.facilityCode
+         left join DHIS2_CurTx on NDW_CurTx.SiteCode=DHIS2_CurTx.SiteCode COLLATE Latin1_General_CI_AS
+         left join Upload on NDW_CurTx.SiteCode=Upload.SiteCode
+         left join Uploaddata on NDW_CurTx.SiteCode=Uploaddata.MFL_Code COLLATE Latin1_General_CI_AS
+         left join Facilityinfo fac on NDW_CurTx.SiteCode=fac.MFL_Code

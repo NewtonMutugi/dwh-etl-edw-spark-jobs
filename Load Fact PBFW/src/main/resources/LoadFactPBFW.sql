@@ -22,7 +22,9 @@ SELECT
     Receivedeac1,
     Receivedeac2,
     Receivedeac3,
-    Pbfwreglineswitch
+    Pbfwreglineswitch,
+    Pregnant,
+    Breastfeeding
 FROM Summary
 LEFT JOIN Facility ON Facility.Mflcode = Summary.Sitecode
 LEFT JOIN Mfl_partner_agency_combination ON Mfl_partner_agency_combination.Mfl_code = Summary.Sitecode

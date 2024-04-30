@@ -36,7 +36,19 @@ Select
     StartRegimenline,
     obs.WHOStage,
     Patient.DateConfirmedHIVPositive,
-    outcome.ARTOutcome
+    outcome.ARTOutcome,
+    Case When DATEDIFF(DAY, las.LastEncounterDate,las.NextAppointmentDate) <=89 THEN
+                    '<3 Months'
+        when DATEDIFF(DAY, las.LastEncounterDate,las.NextAppointmentDate) >=90 and
+                    DATEDIFF(DAY, las.LastEncounterDate,las.NextAppointmentDate) <=150 THEN
+                    '<3-5 Months'
+        When DATEDIFF(DAY, las.LastEncounterDate,las.NextAppointmentDate) >151 THEN
+                    '>6+ Months'
+        Else 'Unclassified'
+END As AppointmentsCategory,
+    pbfw.Pregnant,
+    pbfw.Breastfeeding
+
 FROM ODS.dbo.CT_Patient Patient
 inner join ODS.dbo.CT_ARTPatients ART on ART.PatientPK = Patient.Patientpk and ART.SiteCode = Patient.SiteCode
 left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.Patientpk = Patient.PatientPK and Pre.SiteCode = Patient.SiteCode

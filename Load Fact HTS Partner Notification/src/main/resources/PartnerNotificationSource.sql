@@ -25,4 +25,5 @@ select
     Dob,
     LinkDateLinkedToCare,
     dateDiff(yy,Dob,DateElicited) as AgeAtElicitation
+    cast(getdate() as date) as LoadDate
 from dbo.HTS_PartnerNotificationServices

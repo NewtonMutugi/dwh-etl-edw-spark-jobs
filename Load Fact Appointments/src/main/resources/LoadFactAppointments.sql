@@ -10,6 +10,10 @@ Select
     DiffExpectedTCADateLastEncounter,
     age_group.AgeGroupKey,
     AsofDate,
+    RegimenAsof,
+    coalesce(NoOfUnscheduledVisits, 0) as NoOfUnscheduledVisitsAsOf,
+    patient_info.StartARTDate,
+    patient_info.Patienttype,
     cast(current_date() as date) as LoadDate
 
 from apt
@@ -20,4 +24,6 @@ left join patient on patient.PatientPKHash = apt.PatientPKhash and patient.SiteC
 left join agency on agency.AgencyName = MFL_partner_agency_combination.Agency
 left join age_group on age_group.AgeGroupKey = DATEDIFF(year,patient.DOB,apt.AsOfDate)
 left join as_of on as_of.Date = apt.AsOfDate
+left join patient_info on patient_info.PatientPK = apt.PatientPK
+    and patient_info.SiteCode = apt.MFLCode
 WHERE patient.voided =0;

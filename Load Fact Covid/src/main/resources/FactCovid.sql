@@ -1,4 +1,5 @@
 Select
+    Factkey = IDENTITY(INT, 1, 1),
     Patient.PatientKey,
     facility.FacilityKey,
     partner.PartnerKey,
@@ -33,19 +34,20 @@ Select
     PatientVentilated,
     TracingFinalOutcome ,
     CauseOfDeath,
-    cast(current_date() as date) as LoadDate
+    cast(getdate() as date) as LoadDate
+INTO NDWH.dbo.FactCovid
 from Covid
-    left join DimPatient as patient on patient.PatientPKHash = Covid.PatientPKHash and patient.SiteCode = Covid.SiteCode
-    left join DimFacility as facility on facility.MFLCode = Covid.SiteCode
+    left join NDWH.dbo.DimPatient as patient on patient.PatientPKHash =  Covid.PatientPKHash  and patient.SiteCode = Covid.SiteCode
+    left join NDWH.dbo.DimFacility as facility on facility.MFLCode = Covid.SiteCode
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = Covid.SiteCode
-    left join DimPartner as partner on partner.PartnerName = upper(MFL_partner_agency_combination.SDP)
-    left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
-    left join DimAgeGroup as age_group on age_group.Age = Covid.AgeLastVisit
-    left join DimDate as Covid19AssessmentDate on Covid19AssessmentDate.Date = Covid.Covid19AssessmentDate
-    left join DimDate as DateGivenFirstDose  on DateGivenFirstDose.Date = Covid.DateGivenFirstDose
-    left join DimDate as BoosterDoseDate  on BoosterDoseDate.Date = Covid.BoosterDoseDate
-    left join DimDate as DateGivenSecondDose  on DateGivenSecondDose.Date = Covid.DateGivenSecondDose
-    left join DimDate as COVID19TestDate  on COVID19TestDate.Date = Covid.COVID19TestDate
-    left join DimDate as AdmissionStartDate  on AdmissionStartDate.Date = Covid.AdmissionStartDate
-    left join DimDate as AdmissionEndDate  on AdmissionEndDate.Date = Covid.AdmissionEndDate
-Where RowNumber = 1 and patient.voided =0;
+    left join NDWH.dbo.DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP
+    left join NDWH.dbo.DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
+    left join NDWH.dbo.DimAgeGroup as age_group on age_group.Age = Covid.AgeLastVisit
+    left join NDWH.dbo.DimDate as Covid19AssessmentDate on Covid19AssessmentDate.Date = Covid.Covid19AssessmentDate
+    left join NDWH.dbo.DimDate as DateGivenFirstDose  on DateGivenFirstDose.Date = Covid.DateGivenFirstDose
+    left join NDWH.dbo.DimDate as BoosterDoseDate  on BoosterDoseDate.Date = Covid.BoosterDoseDate
+    left join NDWH.dbo.DimDate as DateGivenSecondDose  on DateGivenSecondDose.Date = Covid.DateGivenSecondDose
+    left join NDWH.dbo.DimDate as COVID19TestDate  on COVID19TestDate.Date = Covid.COVID19TestDate
+    left join NDWH.dbo.DimDate as AdmissionStartDate  on AdmissionStartDate.Date = Covid.AdmissionStartDate
+    left join NDWH.dbo.DimDate as AdmissionEndDate  on AdmissionEndDate.Date = Covid.AdmissionEndDate
+where RowNumber=1 and patient.voided =0;
