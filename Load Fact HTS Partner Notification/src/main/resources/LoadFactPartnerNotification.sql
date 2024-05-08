@@ -5,6 +5,7 @@ select
     agency.AgencyKey,
     age_group.AgeGroupKey,
     PartnerPatientPk,
+    IndexPatientPkHash,
     KnowledgeOfHivStatus,
     PartnerPersonID,
     CCCNumber,
