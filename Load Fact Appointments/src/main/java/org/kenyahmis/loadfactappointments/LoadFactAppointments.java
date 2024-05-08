@@ -99,6 +99,17 @@ public class LoadFactAppointments {
         dimMFLPartnerAgencyCombinationDataFrame.persist(StorageLevel.DISK_ONLY());
         dimMFLPartnerAgencyCombinationDataFrame.createOrReplaceTempView("mfl_partner_agency_combination");
 
+        Dataset<Row> patientInfoDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", "select patient.PatientPK,patient.SiteCode, patient.Patienttype, art.StartARTDate from ODS.dbo.CT_Patient as patient inner join ODS.dbo.CT_ARTPatients as art on art.PatientPk  = patient.PatientPK and art.SiteCode = patient.Sitecode")
+                .load();
+        patientInfoDataFrame.persist(StorageLevel.DISK_ONLY());
+        patientInfoDataFrame.createOrReplaceTempView("patient_info");
+
         Dataset<Row> historicalAptDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.Historical.url"))

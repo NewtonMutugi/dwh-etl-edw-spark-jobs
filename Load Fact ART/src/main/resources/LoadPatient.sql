@@ -14,9 +14,9 @@ Select
     ART.PreviousARTRegimen,
     ART.StartARTDate,
     LastARTDate,
-    CASE WHEN [DateConfirmedHIVPositive] IS NOT NULL
-        AND ART.StartARTDate IS NOT NULL THEN CASE WHEN DateConfirmedHIVPositive <= ART.StartARTDate THEN DATEDIFF(
-            DAY, DateConfirmedHIVPositive, ART.StartARTDate
+    CASE WHEN Patient.[DateConfirmedHIVPositive] IS NOT NULL
+        AND ART.StartARTDate IS NOT NULL THEN CASE WHEN Patient.DateConfirmedHIVPositive <= ART.StartARTDate THEN DATEDIFF(
+            DAY, Patient.DateConfirmedHIVPositive, ART.StartARTDate
         ) ELSE NULL END ELSE NULL END AS TimetoARTDiagnosis,
     CASE WHEN Patient.RegistrationAtCCC IS NOT NULL
         AND ART.StartARTDate IS NOT NULL THEN CASE WHEN Patient.RegistrationAtCCC <= ART.StartARTDate THEN DATEDIFF(
@@ -55,3 +55,4 @@ left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.Patientpk = Pa
 left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientPK = Patient.PatientPK and las.SiteCode = Patient.SiteCode
 left join ODS.dbo.Intermediate_ARTOutcomes outcome on outcome.PatientPK = Patient.PatientPK and outcome.SiteCode = Patient.SiteCode
 left join ODS.dbo.intermediate_LatestObs obs on obs.PatientPK=Patient.PatientPK and obs.SiteCode=Patient.SiteCode
+left join ODS.dbo.Intermediate_Pbfw pbfw on pbfw.PatientPK=Patient.PatientPK and pbfw.SiteCode=Patient.SiteCode

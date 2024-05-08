@@ -83,19 +83,30 @@ public class LoadFactART {
         visitsDataFrame.persist(StorageLevel.DISK_ONLY());
         visitsDataFrame.createOrReplaceTempView("visit");
 
-        Dataset<Row> latestDiabetesDataFrame = session.read()
+        Dataset<Row> intermediateNCDControlledStatusLastVisitDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", "dbo.Intermediate_LatestDiabetesTests")
+                .option("dbtable", "dbo.Intermediate_NCDControlledStatusLastVisit")
                 .load();
-        latestDiabetesDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestDiabetesDataFrame.createOrReplaceTempView("latest_diabetes_test");
+        intermediateNCDControlledStatusLastVisitDataFrame.persist(StorageLevel.DISK_ONLY());
+        intermediateNCDControlledStatusLastVisitDataFrame.createOrReplaceTempView("Intermediate_NCDControlledStatusLastVisit");
 
         String loadNCDScreeningQuery = loadFactART.loadQuery("NCDScreening.sql");
         session.sql(loadNCDScreeningQuery).createOrReplaceTempView("ncd_screening");
+
+        Dataset<Row> rrtLat12MnthsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", "select distinct PatientPKHash, MFLCode from ODS.dbo.Intermediate_RTTLast12MonthsAfter3monthsIIT")
+                .load();
+        rrtLat12MnthsDataFrame.persist(StorageLevel.DISK_ONLY());
+        rrtLat12MnthsDataFrame.createOrReplaceTempView("rtt_within_last_12_months");
 
 
         Dataset<Row> dimDateDataFrame = session.read()

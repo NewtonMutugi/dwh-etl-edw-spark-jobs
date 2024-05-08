@@ -1,8 +1,7 @@
 Select
     Emr.facilityCode
     ,Emr.facilityName
---     ,Emr.value As EMRValue
-    ,CONVERT (varchar,Emr.[value] ) As EMRValue
+    ,Emr.value As EMRValue
     ,Emr.statusDate
     ,Emr.indicatorDate
 from EMR
