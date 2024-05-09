@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import static org.apache.spark.sql.functions.*;
 
 public class LoadFactNCDs {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactNCDs.class);
@@ -105,6 +104,19 @@ public class LoadFactNCDs {
         diabetesOrderingDataFrame.createOrReplaceTempView("diabetes_ordering");
         diabetesOrderingDataFrame.persist(StorageLevel.DISK_ONLY());
 
+        String dyslipidemiaOrderingQuery = loadFactNCDs.loadQuery("dyslipidemia_ordering.sql");
+
+        Dataset<Row> dyslipidemiaOrderingDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", dyslipidemiaOrderingQuery)
+                .load();
+        dyslipidemiaOrderingDataFrame.createOrReplaceTempView("dyslipidemia_ordering");
+        dyslipidemiaOrderingDataFrame.persist(StorageLevel.DISK_ONLY());
+
         String earliestHypertensionQuery = loadFactNCDs.loadQuery("earliest_hpertension_recorded.sql");
 
         Dataset<Row> earliestHypertensionDataFrame = session.sql(earliestHypertensionQuery);
@@ -123,33 +135,34 @@ public class LoadFactNCDs {
         earliestDiabetesDataFrame.printSchema();
         earliestDiabetesDataFrame.show();
 
-        Dataset<Row> IntermediateLatestDiabetesTestsDataFrame = session.read()
+        String earliestDyslipidemiaQuery = loadFactNCDs.loadQuery("earliest_dyslipidemia_recorded.sql");
+
+        Dataset<Row> earliestDyslipidemiaDataFrame = session.sql(earliestDyslipidemiaQuery);
+        earliestDyslipidemiaDataFrame.createOrReplaceTempView("earliest_dyslipidemia_recorded");
+        earliestDyslipidemiaDataFrame.persist(StorageLevel.DISK_ONLY());
+
+        Dataset<Row> IntermediateNCDControlledStatusLVDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select * from dbo.Intermediate_LatestDiabetesTests")
+                .option("query", "select * from dbo.Intermediate_NCDControlledStatusLastVisit")
                 .load();
-        IntermediateLatestDiabetesTestsDataFrame.persist(StorageLevel.DISK_ONLY());
-        IntermediateLatestDiabetesTestsDataFrame.createOrReplaceTempView("Intermediate_LatestDiabetesTests");
+        IntermediateNCDControlledStatusLVDataFrame.persist(StorageLevel.DISK_ONLY());
+        IntermediateNCDControlledStatusLVDataFrame.createOrReplaceTempView("Intermediate_NCDControlledStatusLastVisit");
 
-        Dataset<Row> IntermediateLastVisitDateDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select * from dbo.Intermediate_LastVisitDate")
-                .load();
-        IntermediateLastVisitDateDataFrame.persist(StorageLevel.DISK_ONLY());
-        IntermediateLastVisitDateDataFrame.createOrReplaceTempView("Intermediate_LastVisitDate");
+        String hypertensiveScreeningQuery = loadFactNCDs.loadQuery("hypertensive_and_screening_indicators.sql");
 
-        String underlyingNCDQuery = loadFactNCDs.loadQuery("with_underlying_ncd_condition_indicators.sql");
+        Dataset<Row> hypertensiveScreeningDataFrame = session.sql(hypertensiveScreeningQuery);
+        hypertensiveScreeningDataFrame.createOrReplaceTempView("hypertensive_and_screening_indicators");
+        hypertensiveScreeningDataFrame.persist(StorageLevel.DISK_ONLY());
 
-        Dataset<Row> underlyingNCDDataFrame = session.sql(underlyingNCDQuery);
-        underlyingNCDDataFrame.createOrReplaceTempView("with_underlying_ncd_condition_indicators");
-        underlyingNCDDataFrame.persist(StorageLevel.DISK_ONLY());
+        String diabetesScreeningIndicatorsQuery = loadFactNCDs.loadQuery("diabetes_and_screening_indicators.sql");
+
+        Dataset<Row> diabetesScreeningIndicatorsDataFrame = session.sql(diabetesScreeningIndicatorsQuery);
+        diabetesScreeningIndicatorsDataFrame.createOrReplaceTempView("diabetes_and_screening_indicators");
+        diabetesScreeningIndicatorsDataFrame.persist(StorageLevel.DISK_ONLY());
 
         Dataset<Row> dimMFLPartnerAgencyCombinationDataFrame = session.read()
                 .format("jdbc")
