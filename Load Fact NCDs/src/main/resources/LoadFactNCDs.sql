@@ -16,6 +16,7 @@ select
     ncd_source_data.`Cystic Fibrosis`,
     ncd_source_data.`Deafness and Hearing Impairment`,
     ncd_source_data.Diabetes,
+    ncd_source_data.Dyslipidemia,
     ncd_source_data.Endometriosis,
     ncd_source_data.Epilepsy,
     ncd_source_data.Glaucoma,
@@ -29,14 +30,16 @@ select
     ncd_source_data.Osteoporosis,
     ncd_source_data.`Sickle Cell Anaemia`,
     ncd_source_data.`Thyroid disease`,
-    with_underlying_ncd_condition_indicators.IsDiabeticAndScreenedDiabetes,
-    with_underlying_ncd_condition_indicators.IsDiabeticAndDiabetesControlledAtLastTest,
-    with_underlying_ncd_condition_indicators.IsHyperTensiveAndScreenedBPLastVisit,
-    with_underlying_ncd_condition_indicators.IsHyperTensiveAndBPControlledAtLastVisit,
+    diabetes_and_screening_indicators.IsDiabeticAndScreenedDiabetes,
+    diabetes_and_screening_indicators.IsDiabeticAndDiabetesControlledAtLastTest,
+    hypertensive_and_screening_indicators.IsHyperTensiveAndScreenedBPLastVisit,
+    hypertensive_and_screening_indicators.IsHyperTensiveAndBPControlledAtLastVisit,
     first_hypertension.DateKey as FirstHypertensionRecoredeDateKey,
-    first_diabetes.DateKey as FirstDiabetesRecordedDateKey
+    first_diabetes.DateKey as FirstDiabetesRecordedDateKey,
+    first_dyslipidemia.DateKey as FirstDyslipidemiaRecordedDateKey
 from ncd_source_data
-left join with_underlying_ncd_condition_indicators on with_underlying_ncd_condition_indicators.PatientPKHash = ncd_source_data.PatientPKHash and with_underlying_ncd_condition_indicators.SiteCode = ncd_source_data.SiteCode
+left join diabetes_and_screening_indicators on diabetes_and_screening_indicators.PatientPKHash = ncd_source_data.PatientPKHash and diabetes_and_screening_indicators.SiteCode = ncd_source_data.SiteCode
+left join hypertensive_and_screening_indicators on hypertensive_and_screening_indicators.PatientPKHash = ncd_source_data.PatientPKHash and hypertensive_and_screening_indicators.SiteCode = ncd_source_data.SiteCode
 left join age_as_of_last_visit on age_as_of_last_visit.PatientPKHash = ncd_source_data.PatientPKHash and age_as_of_last_visit.SiteCode = ncd_source_data.SiteCode
 left join DimFacility as facility on facility.MFLCode = ncd_source_data.SiteCode
 left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = ncd_source_data.SiteCode
@@ -46,5 +49,7 @@ left join DimAgeGroup as age_group on age_group.Age = age_as_of_last_visit.AgeLa
 left join DimPatient as patient on patient.PatientPKHash = ncd_source_data.PatientPKHash and patient.SiteCode = ncd_source_data.SiteCode
 left join earliest_hpertension_recorded on earliest_hpertension_recorded.PatientPKHash = ncd_source_data.PatientPKHash and earliest_hpertension_recorded.SiteCode = ncd_source_data.Sitecode
 left join earliest_diabetes_recorded on earliest_diabetes_recorded.PatientPKHash = ncd_source_data.PatientPKHash and earliest_diabetes_recorded.SiteCode = ncd_source_data.SiteCode
+left join earliest_dyslipidemia_recorded on earliest_dyslipidemia_recorded.PatientPKHash = ncd_source_data.PatientPKHash and earliest_dyslipidemia_recorded.SiteCode = ncd_source_data.SiteCode
 left join DimDate as first_hypertension on first_hypertension.Date = cast(earliest_hpertension_recorded.VisitDate as date)
-left join DimDate as first_diabetes on first_diabetes.Date = cast(earliest_diabetes_recorded.VisitDate as date);
+left join DimDate as first_diabetes on first_diabetes.Date = cast(earliest_diabetes_recorded.VisitDate as date)
+left join DimDate as first_dyslipidemia on first_dyslipidemia.Date = cast(earliest_dyslipidemia_recorded.VisitDate as date);
