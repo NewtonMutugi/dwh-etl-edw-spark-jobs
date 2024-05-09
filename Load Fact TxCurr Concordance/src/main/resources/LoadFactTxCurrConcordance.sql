@@ -14,7 +14,7 @@ Select
     Percent_variance_KHIS_EMR as Proportion_variance_KHIS_EMR,
     dwapi.DwapiVersion
 from Summary
-    left join NDWH.dbo.DimFacility as facility on facility.MFLCode = Summary.MFLCode
+    left join facility on facility.MFLCode = Summary.MFLCode
     left join Facilityinfo on Facilityinfo.MFL_Code=Summary.MFLCode
     left join partner on partner.PartnerName = Facilityinfo.PartnerName
     left join agency on agency.AgencyName = Facilityinfo.Agency
