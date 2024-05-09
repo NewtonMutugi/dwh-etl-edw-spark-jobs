@@ -22,9 +22,9 @@ SELECT  Id  AS manifestId,
         MAX(COALESCE(h.emr, 'Unknown')) AS emrId,
         'HTS' AS docketId,
         1 AS upload,
-    [Start],
-         [End],
-				cast(getdate() as date) as LoadDate
+        [Start],
+        [End],
+		current_date() as LoadDate
 		FROM ODS.DBO.HTS_FacilityManifest m
 			INNER JOIN ODS.DBO.ALL_EMRSites h ON m.SiteCode = h.MFL_Code
 		GROUP BY    ID,[start],[end],

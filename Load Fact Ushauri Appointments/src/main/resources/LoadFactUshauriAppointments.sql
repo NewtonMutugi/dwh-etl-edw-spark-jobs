@@ -44,46 +44,38 @@ SELECT
     Datereturnedtocare.Datekey    AS DateReturnedToCareDateKey,
     Daysdefaulted,
     Nupihash
-FROM   Ods.Dbo.Ushauri_patientappointments AS Apt
-    LEFT JOIN Ndwh.Dbo.Dimfacility AS Facility
-ON Facility.Mflcode = Apt.Sitecode
-    LEFT JOIN Mfl_partner_agency_combination
-    ON Mfl_partner_agency_combination.Mfl_code = Apt.Sitecode
-    LEFT JOIN Ndwh.Dbo.Dimpartner AS Partner
-    ON Partner.Partnername = Mfl_partner_agency_combination.Sdp
-    LEFT JOIN Ndwh.Dbo.Dimpatient AS Patient
-    ON Patient.Patientpkhash = Apt.Patientpkhash
-    AND Patient.Sitecode = Apt.Sitecode
-    LEFT JOIN Ndwh.Dbo.Dimagency AS Agency
-    ON Agency.Agencyname = Mfl_partner_agency_combination.Agency
-    LEFT JOIN Ndwh.Dbo.Dimagegroup AS Age_group
-    ON Age_group.Agegroupkey = DATEDIFF(YEAR, Apt.Dob, Appointmentdate)
-    LEFT JOIN Ndwh.Dbo.Dimdate AS As_of
-    ON As_of.Date = Apt.Appointmentdate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Appointment
-    ON Appointment.Date = Apt.Appointmentdate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Attended
-    ON Attended.Date = Apt.Dateattended
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Fourweeksdate
-    ON Fourweeksdate.Date =
-    Fourweeksmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Threeweeksdate
-    ON Threeweeksdate.Date =
-    Threeweeksmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Twoweeksdate
-    ON Twoweeksdate.Date =
-    Twoweeksmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Oneweeksdate
-    ON Oneweeksdate.Date =
-    Apt.Oneweeksmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Onedaydate
-    ON Onedaydate.Date = Apt.Onedaysmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Missedappointmentdate
-    ON Missedappointmentdate.Date =
-    Apt.Missedappointmentsmssenddate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Tracingdate
-    ON Tracingdate.Date =
-    Apt.Tracingoutcomedate
-    LEFT JOIN Ndwh.Dbo.Dimdate AS Datereturnedtocare
-    ON Datereturnedtocare.Date =
-    Apt.Datereturnedtocare
+FROM Apt
+         LEFT JOIN Dimfacility AS Facility
+                   ON Facility.Mflcode = Apt.Sitecode
+         LEFT JOIN MFL_partner_agency_combination
+                   ON MFL_partner_agency_combination.Mfl_code = Apt.Sitecode
+         LEFT JOIN Dimpartner AS Partner
+                   ON Partner.Partnername = MFL_partner_agency_combination.Sdp
+         LEFT JOIN Dimpatient AS Patient
+                   ON Patient.Patientpkhash = Apt.Patientpkhash AND Patient.Sitecode = Apt.Sitecode
+         LEFT JOIN Dimagency AS Agency
+                   ON Agency.Agencyname = MFL_partner_agency_combination.Agency
+         LEFT JOIN Dimagegroup AS Age_group
+                   ON Age_group.Agegroupkey = DATEDIFF(YEAR, CAST(Apt.Dob As DATE), CAST(Appointmentdate As DATE))
+         LEFT JOIN DimDate AS As_of
+                   ON As_of.Date = CAST(Apt.Appointmentdate As DATE)
+         LEFT JOIN DimDate AS Appointment
+                   ON Appointment.Date = CAST(Apt.Appointmentdate As DATE)
+         LEFT JOIN DimDate AS Attended
+                   ON Attended.Date = CAST(Apt.Dateattended As DATE)
+         LEFT JOIN DimDate AS Fourweeksdate
+                   ON Fourweeksdate.Date = CAST(Apt.Fourweeksmssenddate As DATE)
+         LEFT JOIN DimDate AS Threeweeksdate
+                   ON Threeweeksdate.Date = CAST(Apt.Threeweeksmssenddate As DATE)
+         LEFT JOIN DimDate AS Twoweeksdate
+                   ON Twoweeksdate.Date = CAST(Apt.Twoweeksmssenddate As DATE)
+         LEFT JOIN DimDate AS Oneweeksdate
+                   ON Oneweeksdate.Date = CAST(Apt.Oneweeksmssenddate As DATE)
+         LEFT JOIN DimDate AS Onedaydate
+                   ON Onedaydate.Date = CAST(Apt.Onedaysmssenddate As DATE)
+         LEFT JOIN DimDate AS Missedappointmentdate
+                   ON Missedappointmentdate.Date = CAST(Apt.Missedappointmentsmssenddate As DATE)
+         LEFT JOIN DimDate AS Tracingdate
+                   ON Tracingdate.Date = CAST(Apt.Tracingoutcomedate As DATE )
+         LEFT JOIN DimDate AS Datereturnedtocare
+                   ON Datereturnedtocare.Date = CAST(Apt.Datereturnedtocare As DATE)
