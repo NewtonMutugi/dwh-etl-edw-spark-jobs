@@ -78,19 +78,17 @@ public class LoadFactPREPRefills {
                         "        datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) as RefillFirstMonthDiffInDays\n" +
                         "    from prep_refills_ordered as  Refil\n" +
                         "    left join PrepPatients Patients on Refil.PrepNumber=Patients.PrepNumber and Refil.PatientPk=Patients.PatientPk \n" +
-                        "        and Refil.SiteCode=Patients.SiteCode\n" +
-                        "    where Refil.PrepNumber is not null \n" +
-                        "        and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 23 and 37\n" +
-                        "        and Refil.RowNumber = 1")
+                        "        and Refil.SiteCode=Patients.SiteCode" +
+                        "    where Refil.PrepNumber is not null and datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate) between 23 and 37 and Refil.RowNumber = 1")
                 .createOrReplaceTempView("PrepRefil1stMonth");
 
         // Prep Refill 3rd Month
         session.sql("select  \n" +
-                        "        Refil.PrepNumber,\n" +
-                        "        Refil.PatientPK,\n" +
-                        "        Refil.SiteCode,\n" +
-                        "        Refil.HtsNumber,\n" +
-                        "        RegimenPrescribed,\n" +
+                        "        Refil.PrepNumber," +
+                        "        Refil.PatientPK," +
+                        "        Refil.SiteCode," +
+                        "        Refil.HtsNumber," +
+                        "        RegimenPrescribed," +
                         "        Refil.DispenseDate,\n" +
                         "        Patients.PrepEnrollmentDate,\n" +
                         "        datediff(Refil.DispenseDate, Patients.PrepEnrollmentDate)  as RefillThirdMonthDiffInDays\n" +
