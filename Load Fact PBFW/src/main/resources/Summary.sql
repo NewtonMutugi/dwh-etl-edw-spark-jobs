@@ -19,7 +19,7 @@ SELECT Patient.PatientPKHash,
            ELSE 0
            END       AS TestedatPNC,
        CASE
-           WHEN Datediff(Year, Dob,  EOMONTH(DATEADD(mm,-1,GETDATE()))) BETWEEN 10 AND 19 THEN
+           WHEN Datediff(Year, Dob, last_day(add_months(current_date, -1))) BETWEEN 10 AND 19
                1
            ELSE 0
            END       AS PositiveAdolescent,
